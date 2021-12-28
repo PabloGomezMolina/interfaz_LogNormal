@@ -9,6 +9,7 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import numpy as np
 import random
+import pandas as pd
 
 
 class Ui_Dialog(object):
