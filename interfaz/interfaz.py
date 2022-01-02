@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 import pandas as pd
-
+from scipy.stats import lognorm
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
