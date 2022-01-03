@@ -73,10 +73,11 @@ class Ui_Dialog(object):
         self.DSB_media = QtWidgets.QDoubleSpinBox(self.GB_input)
         self.DSB_media.setGeometry(QtCore.QRect(10, 190, 62, 22))
         self.DSB_media.setObjectName("DSB_media")
+        self.DSB_media.setSingleStep(0.1)  #paso del doble spin box
         self.DSB_StandardDeviation = QtWidgets.QDoubleSpinBox(self.GB_input)
         self.DSB_StandardDeviation.setGeometry(QtCore.QRect(10, 220, 62, 22))
         self.DSB_StandardDeviation.setObjectName("DSB_StandardDeviation")
-
+        self.DSB_StandardDeviation.setSingleStep(0.1)
         # --- GroupBox EstadisticaActual---
         self.GB_EstadisticaActual = QtWidgets.QGroupBox(Dialog)
         self.GB_EstadisticaActual.setGeometry(QtCore.QRect(730, 340, 301, 251))
@@ -139,9 +140,8 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def plot(self):
-        if self.CB_Scatter.isChecked() and not self.CB_Modelo.isChecked():
-            print('solo scatter activado')
-            # random data
+        if self.CB_Scatter.isChecked() and not self.CB_Modelo.isChecked():  #Solo scatter activado
+            # Lectura y creacion del scatter
             df = pd.read_csv(self.LE_ingresoBD.text(), header = None).rename(columns = {0:"Spacing_set"})
             df = df.sort_values(['Spacing_set'], ascending= True)
             df = df.reset_index(drop=True)
@@ -157,39 +157,68 @@ class Ui_Dialog(object):
             ax.grid()
             # refresh canvas
             self.canvas.draw()
-        elif self.CB_Modelo.isChecked() and not self.CB_Scatter.isChecked():
-            print('solo scatter activado')
-            # random data
-            data = [random.random() for i in range(10)]
+        elif self.CB_Modelo.isChecked() and not self.CB_Scatter.isChecked():  #Solo modelo activado
+            
+            df = pd.read_csv(self.LE_ingresoBD.text(), header = None).rename(columns = {0:"Spacing_set"})
+            df = df.sort_values(['Spacing_set'], ascending= True)
+            max_value_Spacingset = df['Spacing_set'].max()
+            stddev = self.DSB_StandardDeviation.value()
+            mean = self.DSB_media.value()
+            x_fit = np.linspace(0,max_value_Spacingset,200)
+            dist = lognorm([stddev],loc=mean)
+            acumulado_xfit = dist.cdf(x_fit)
             # clearing old figure
             self.figure.clear()
             # create an axis
             ax = self.figure.add_subplot(111, xlabel = "Spacing Set [m]", ylabel = "acumulado")
             ##ax.set_title('seda')
             # plot data
-            ax.plot(data,data, 'r-')
+            ax.grid()
+            ax.plot(x_fit,acumulado_xfit, 'r-')
             # refresh canvas
             self.canvas.draw()
 
         elif self.CB_Scatter.isChecked() and self.CB_Modelo.isChecked():
             print('modelo y scatter activado')
-            # random data
-            data = [random.random() for i in range(10)]
+
+            df = pd.read_csv(self.LE_ingresoBD.text(), header = None).rename(columns = {0:"Spacing_set"})
+            df = df.sort_values(['Spacing_set'], ascending= True)
+            max_value_Spacingset = df['Spacing_set'].max()
+            stddev = self.DSB_StandardDeviation.value()
+            mean = self.DSB_media.value()
+            x_fit = np.linspace(0,max_value_Spacingset,200)
+            dist = lognorm([stddev],loc=mean)
+            acumulado_xfit = dist.cdf(x_fit)
+            df = df.reset_index(drop=True)
+            df['CumSum_SpacingSet'] = df['Spacing_set'].cumsum()
+            df['percent_cumulative'] = df['CumSum_SpacingSet']/df['Spacing_set'].sum()
             # clearing old figure
             self.figure.clear()
             # create an axis
             ax = self.figure.add_subplot(111, xlabel = "Spacing Set [m]", ylabel = "acumulado")
             ##ax.set_title('seda')
             # plot data
-            ax.scatter(data,data)
-            ax.plot(data,data, 'r-')
+            ax.scatter(df.Spacing_set,df.percent_cumulative)
+            ax.plot(x_fit,acumulado_xfit, 'r-')
+            ax.grid()
             # refresh canvas
             self.canvas.draw()
         else:
             print('seleccione un checkbox')
 
     def base_actual(self):
-        print(self.DSB_Spacingset.value())  #Este mejor paa poder ocuparlo como flotante
+
+        #Lectura base datos
+        df = pd.read_csv(self.LE_ingresoBD.text(), header = None).rename(columns = {0:"Spacing_set"})
+        df = df.sort_values(['Spacing_set'], ascending= True)
+        df = df.reset_index(drop=True)
+        df['CumSum_SpacingSet'] = df['Spacing_set'].cumsum()
+        df['percent_cumulative'] = df['CumSum_SpacingSet']/df['Spacing_set'].sum()
+
+        #Coloco los resultados de la base de datos
+
+        #Buscar el percentil del spacing set
+        print(self.DSB_Spacingset.value())  #Este mejor para poder ocuparlo como flotante
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
