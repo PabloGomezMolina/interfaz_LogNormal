@@ -114,9 +114,10 @@ class Ui_Dialog(object):
         self.PB_BaseActual = QtWidgets.QPushButton(self.GB_EstadisticaActual)
         self.PB_BaseActual.setGeometry(QtCore.QRect(170, 210, 111, 31))
         self.PB_BaseActual.setObjectName("PB_BaseActual")
-        self.SB_Spacingset = QtWidgets.QSpinBox(self.GB_EstadisticaActual)
-        self.SB_Spacingset.setGeometry(QtCore.QRect(150, 160, 51, 31))
-        self.SB_Spacingset.setObjectName("SB_Spacingset")
+        self.PB_BaseActual.clicked.connect(self.base_actual)
+        self.DSB_Spacingset = QtWidgets.QDoubleSpinBox(self.GB_EstadisticaActual)
+        self.DSB_Spacingset.setGeometry(QtCore.QRect(150, 160, 51, 31))
+        self.DSB_Spacingset.setValue(0.3)
         self.LE_ActualMin_2 = QtWidgets.QLineEdit(self.GB_EstadisticaActual)
         self.LE_ActualMin_2.setGeometry(QtCore.QRect(20, 170, 31, 21))
         self.LE_ActualMin_2.setObjectName("LE_ActualMin_2")
@@ -141,14 +142,19 @@ class Ui_Dialog(object):
         if self.CB_Scatter.isChecked() and not self.CB_Modelo.isChecked():
             print('solo scatter activado')
             # random data
-            data = [random.random() for i in range(10)]
+            df = pd.read_csv(self.LE_ingresoBD.text(), header = None).rename(columns = {0:"Spacing_set"})
+            df = df.sort_values(['Spacing_set'], ascending= True)
+            df = df.reset_index(drop=True)
+            df['CumSum_SpacingSet'] = df['Spacing_set'].cumsum()
+            df['percent_cumulative'] = df['CumSum_SpacingSet']/df['Spacing_set'].sum()
             # clearing old figure
             self.figure.clear()
             # create an axis
-            ax = self.figure.add_subplot(111, xlabel = "Spacing Set [m]", ylabel = "acumulado")
+            ax = self.figure.add_subplot(111, xlabel = "Spacing Set [m]", ylabel = "acumulado porcentaje")
             ##ax.set_title('seda')
             # plot data
-            ax.scatter(data,data)
+            ax.scatter(df.Spacing_set,df.percent_cumulative)
+            ax.grid()
             # refresh canvas
             self.canvas.draw()
         elif self.CB_Modelo.isChecked() and not self.CB_Scatter.isChecked():
@@ -182,12 +188,15 @@ class Ui_Dialog(object):
         else:
             print('seleccione un checkbox')
 
+    def base_actual(self):
+        print(self.DSB_Spacingset.value())  #Este mejor paa poder ocuparlo como flotante
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Distribucion LogNormal"))
         self.GB_PlotMat.setTitle(_translate("Dialog","Plot"))
         self.GB_input.setTitle(_translate("Dialog", "Input"))
+        self.LE_ingresoBD.setText(_translate("Dialog",r"C:\Users\pgome\OneDrive - usach.cl\Documentos\python\proyecto_distlognormal\ejemplo\spacing.txt"))
         self.PB_DialogButton.setText(_translate("Dialog", "..."))
         self.lbl_ingresodatos.setText(_translate("Dialog", "Ingreso de datos:"))
         self.PB_plot.setText(_translate("Dialog", "Plot"))
