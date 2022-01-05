@@ -75,11 +75,13 @@ class Ui_Dialog(object):
         self.DSB_media.setObjectName("DSB_media")
         self.DSB_media.setDecimals(3)
         self.DSB_media.setSingleStep(0.1)  #paso del doble spin box
+        self.DSB_media.setValue(0.001)  #paso del doble spin box
         self.DSB_StandardDeviation = QtWidgets.QDoubleSpinBox(self.GB_input)
         self.DSB_StandardDeviation.setGeometry(QtCore.QRect(10, 220, 62, 22))
         self.DSB_StandardDeviation.setObjectName("DSB_StandardDeviation")
         self.DSB_StandardDeviation.setDecimals(3)
         self.DSB_StandardDeviation.setSingleStep(0.1)
+        self.DSB_StandardDeviation.setValue(1)
         # --- GroupBox EstadisticaActual---
         self.GB_EstadisticaActual = QtWidgets.QGroupBox(Dialog)
         self.GB_EstadisticaActual.setGeometry(QtCore.QRect(730, 340, 301, 251))
@@ -151,6 +153,7 @@ class Ui_Dialog(object):
         self.DSB_SpacingsetModel.setValue(0.3)
         self.PB_ModeloPercentil = QtWidgets.QPushButton(self.GB_modelo)
         self.PB_ModeloPercentil.setGeometry(QtCore.QRect(170, 60, 111, 31))
+        self.PB_ModeloPercentil.clicked.connect(self.percentil_modelo)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -220,7 +223,7 @@ class Ui_Dialog(object):
             # refresh canvas
             self.canvas.draw()
         else:
-            print('seleccione un checkbox')
+           print('seleccione un checkbox')
 
     def base_actual(self):
 
@@ -246,7 +249,15 @@ class Ui_Dialog(object):
         #tarea2: buscar el ultimo valor y mostrarlo
         self.LE_PercentilBD.setText(str(round(df_filter['percent_cumulative'].max(),4)))
         
-        ##print(self.DSB_Spacingset.value())  #Este mejor para poder ocuparlo como flotante
+    def percentil_modelo(self):
+
+        #generar el modelo
+        
+        #buscar el valor al que corresponde el percentil según el Double Spin Box
+
+
+        print('conectado percentil modelo')
+
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
