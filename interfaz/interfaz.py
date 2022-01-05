@@ -118,9 +118,9 @@ class Ui_Dialog(object):
         self.PB_BaseActual.setGeometry(QtCore.QRect(170, 210, 111, 31))
         self.PB_BaseActual.setObjectName("PB_BaseActual")
         self.PB_BaseActual.clicked.connect(self.base_actual)
-        self.DSB_Spacingset = QtWidgets.QDoubleSpinBox(self.GB_EstadisticaActual)
-        self.DSB_Spacingset.setGeometry(QtCore.QRect(150, 160, 51, 31))
-        self.DSB_Spacingset.setValue(0.3)
+        self.DSB_SpacingsetBD = QtWidgets.QDoubleSpinBox(self.GB_EstadisticaActual)
+        self.DSB_SpacingsetBD.setGeometry(QtCore.QRect(150, 160, 51, 31))
+        self.DSB_SpacingsetBD.setValue(0.3)
         self.LE_PercentilBD = QtWidgets.QLineEdit(self.GB_EstadisticaActual)
         self.LE_PercentilBD.setGeometry(QtCore.QRect(20, 170, 50, 21))
         self.LE_PercentilBD.setObjectName("LE_PercentilBD")
@@ -133,10 +133,24 @@ class Ui_Dialog(object):
         self.lbl_SpacingSetMuestra.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.lbl_SpacingSetMuestra.setObjectName("lbl_SpacingSetMuestra")
 
-        # -- Groupbox Modelo-- 
+        # -- Groupbox Modelo -- 
         self.GB_modelo = QtWidgets.QGroupBox(Dialog)
-        self.GB_modelo.setGeometry(QtCore.QRect(730, 600, 301, 171))
+        self.GB_modelo.setGeometry(QtCore.QRect(730, 600, 301, 100))
         self.GB_modelo.setObjectName("GB_modelo")
+        self.LE_PercentilModel = QtWidgets.QLineEdit(self.GB_modelo)
+        self.LE_PercentilModel.setGeometry(QtCore.QRect(20, 25, 50, 21))
+        self.LE_PercentilModel.setObjectName("LE_PercentilModel")
+        self.lbl_percentilBaseModel = QtWidgets.QLabel(self.GB_modelo)
+        self.lbl_percentilBaseModel.setGeometry(QtCore.QRect(80, 25, 71, 16))
+        self.lbl_percentilBaseModel.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.lbl_percentilBaseModel.setObjectName("lbl_percentilBase")
+        self.lbl_SpacingSetMuestra = QtWidgets.QLabel(self.GB_modelo)
+        self.lbl_SpacingSetMuestra.setGeometry(QtCore.QRect(210, 25, 71, 16))
+        self.DSB_SpacingsetModel = QtWidgets.QDoubleSpinBox(self.GB_modelo)
+        self.DSB_SpacingsetModel.setGeometry(QtCore.QRect(150, 20, 51, 31))
+        self.DSB_SpacingsetModel.setValue(0.3)
+        self.PB_ModeloPercentil = QtWidgets.QPushButton(self.GB_modelo)
+        self.PB_ModeloPercentil.setGeometry(QtCore.QRect(170, 60, 111, 31))
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -226,9 +240,9 @@ class Ui_Dialog(object):
         #Buscar el percentil del spacing set
 
         #tarea1: generar un filtrado de menor o igual al valor de spacing set
-        df_filter = df[(df['Spacing_set'] <= self.DSB_Spacingset.value())].copy()
+        df_filter = df[(df['Spacing_set'] <= self.DSB_SpacingsetBD.value())].copy()
         
-        self.DSB_Spacingset.setValue(df_filter['Spacing_set'].max())
+        self.DSB_SpacingsetBD.setValue(df_filter['Spacing_set'].max())
         #tarea2: buscar el ultimo valor y mostrarlo
         self.LE_PercentilBD.setText(str(round(df_filter['percent_cumulative'].max(),4)))
         
@@ -256,8 +270,10 @@ class Ui_Dialog(object):
         self.lbl_ActualMinaBase.setText(_translate("Dialog", "Mínimo"))
         self.PB_BaseActual.setText(_translate("Dialog", "Ver Base Actual"))
         self.lbl_percentilBase.setText(_translate("Dialog", "Percentil"))
+        self.lbl_percentilBaseModel.setText(_translate("Dialog", "Percentil"))
         self.lbl_SpacingSetMuestra.setText(_translate("Dialog", "SpacingSet"))
-        self.GB_modelo.setTitle(_translate("Dialog", "Estadistica modelo"))
+        self.GB_modelo.setTitle(_translate("Dialog", "Modelo"))
+        self.PB_ModeloPercentil.setText(_translate("Dialog", "Buscar"))
 
 
 if __name__ == "__main__":
