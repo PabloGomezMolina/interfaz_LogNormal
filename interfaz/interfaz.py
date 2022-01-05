@@ -252,11 +252,12 @@ class Ui_Dialog(object):
     def percentil_modelo(self):
 
         #generar el modelo
-        
+        stddev = self.DSB_StandardDeviation.value()
+        mean = self.DSB_media.value()
+        dist = lognorm([stddev],loc=mean)
         #buscar el valor al que corresponde el percentil según el Double Spin Box
-
-
-        print('conectado percentil modelo')
+        value_percentil = dist.cdf(self.DSB_SpacingsetModel.value())[0]
+        self.LE_PercentilModel.setText(str(round(value_percentil,2)))
 
 
     def retranslateUi(self, Dialog):
