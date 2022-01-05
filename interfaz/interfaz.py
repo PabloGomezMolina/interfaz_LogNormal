@@ -224,7 +224,15 @@ class Ui_Dialog(object):
         self.LE_ActualMax.setText(str(round(df['Spacing_set'].max(),1)))
         self.LE_ActualMin.setText(str(df['Spacing_set'].min()))
         #Buscar el percentil del spacing set
-        print(self.DSB_Spacingset.value())  #Este mejor para poder ocuparlo como flotante
+
+        #tarea1: generar un filtrado de menor o igual al valor de spacing set
+        df_filter = df[(df['Spacing_set'] <= self.DSB_Spacingset.value())].copy()
+        
+        self.DSB_Spacingset.setValue(df_filter['Spacing_set'].max())
+        #tarea2: buscar el ultimo valor y mostrarlo
+        self.LE_PercentilBD.setText(str(round(df_filter['percent_cumulative'].max(),4)))
+        
+        ##print(self.DSB_Spacingset.value())  #Este mejor para poder ocuparlo como flotante
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
