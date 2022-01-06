@@ -17,6 +17,7 @@ class Ui_Dialog(object):
         Dialog.setObjectName("Dialog")
         Dialog.resize(1055, 774)
         
+        #Derechos de autor
         self.lbl_autor = QtWidgets.QLabel(Dialog)
         self.lbl_autor.setGeometry(QtCore.QRect(730,680,200,100))
         self.lbl_autor.setText('En caso de encontrar algun error,\ncomunicarse con Pablo Gómez\n(pgomez@srk.cl)')
@@ -159,7 +160,21 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
-    
+
+        #Push Button para generar excel
+        self.PB_Excel = QtWidgets.QPushButton(Dialog)
+        self.PB_Excel.setGeometry(QtCore.QRect(900, 710, 120, 40))
+        self.PB_Excel.setText('Generar .xlsx')
+        self.PB_Excel.clicked.connect(self.xlsx_file)
+
+    def xlsx_file(self):
+        msg = QtWidgets.QMessageBox()
+        msg.resize(200,100)
+        msg.setWindowTitle("Información")
+        msg.setText("Modulo en construcción")
+        msg.setIcon(QtWidgets.QMessageBox.Information)
+        x = msg.exec_()
+
     def search_file(self):
         filename = QtWidgets.QFileDialog.getOpenFileName(Dialog, "Abrir archivo", 'C:\\', 'txt files (*.txt)')
         self.LE_ingresoBD.setText(filename[0])    
