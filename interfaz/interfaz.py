@@ -48,6 +48,7 @@ class Ui_Dialog(object):
         self.PB_DialogButton = QtWidgets.QPushButton(self.GB_input)
         self.PB_DialogButton.setGeometry(QtCore.QRect(180, 50, 71, 31))
         self.PB_DialogButton.setObjectName("PB_DialogButton")
+        self.PB_DialogButton.clicked.connect(self.search_file)
         self.lbl_ingresodatos = QtWidgets.QLabel(self.GB_input)
         self.lbl_ingresodatos.setGeometry(QtCore.QRect(10, 20, 201, 21))
         self.lbl_ingresodatos.setObjectName("lbl_ingresodatos")
@@ -157,73 +158,91 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+    
+    def search_file(self):
+        filename = QtWidgets.QFileDialog.getOpenFileName(Dialog, "Abrir archivo", 'C:\\', 'txt files (*.txt)')
+        self.LE_ingresoBD.setText(filename[0])    
 
     def plot(self):
-        if self.CB_Scatter.isChecked() and not self.CB_Modelo.isChecked():  #Solo scatter activado
-            # Lectura y creacion del scatter
-            df = pd.read_csv(self.LE_ingresoBD.text(), header = None).rename(columns = {0:"Spacing_set"})
-            df = df.sort_values(['Spacing_set'], ascending= True)
-            df = df.reset_index(drop=True)
-            df['CumSum_SpacingSet'] = df['Spacing_set'].cumsum()
-            df['percent_cumulative'] = df['CumSum_SpacingSet']/df['Spacing_set'].sum()
-            # clearing old figure
-            self.figure.clear()
-            # create an axis
-            ax = self.figure.add_subplot(111, xlabel = "Spacing Set [m]", ylabel = "acumulado porcentaje")
-            ##ax.set_title('seda')
-            # plot data
-            ax.scatter(df.Spacing_set,df.percent_cumulative)
-            ax.grid()
-            # refresh canvas
-            self.canvas.draw()
-        elif self.CB_Modelo.isChecked() and not self.CB_Scatter.isChecked():  #Solo modelo activado
-            
-            df = pd.read_csv(self.LE_ingresoBD.text(), header = None).rename(columns = {0:"Spacing_set"})
-            df = df.sort_values(['Spacing_set'], ascending= True)
-            max_value_Spacingset = df['Spacing_set'].max()
-            stddev = self.DSB_StandardDeviation.value()
-            mean = self.DSB_media.value()
-            x_fit = np.linspace(0,max_value_Spacingset,200)
-            dist = lognorm([stddev],loc=mean)
-            acumulado_xfit = dist.cdf(x_fit)
-            # clearing old figure
-            self.figure.clear()
-            # create an axis
-            ax = self.figure.add_subplot(111, xlabel = "Spacing Set [m]", ylabel = "acumulado")
-            ##ax.set_title('seda')
-            # plot data
-            ax.grid()
-            ax.plot(x_fit,acumulado_xfit, 'r-')
-            # refresh canvas
-            self.canvas.draw()
+        try:
+            if self.CB_Scatter.isChecked() and not self.CB_Modelo.isChecked():  #Solo scatter activado
+                # Lectura y creacion del scatter
+                df = pd.read_csv(self.LE_ingresoBD.text(), header = None).rename(columns = {0:"Spacing_set"})
+                df = df.sort_values(['Spacing_set'], ascending= True)
+                df = df.reset_index(drop=True)
+                df['CumSum_SpacingSet'] = df['Spacing_set'].cumsum()
+                df['percent_cumulative'] = df['CumSum_SpacingSet']/df['Spacing_set'].sum()
+                # clearing old figure
+                self.figure.clear()
+                # create an axis
+                ax = self.figure.add_subplot(111, xlabel = "Spacing Set [m]", ylabel = "acumulado porcentaje")
+                ##ax.set_title('seda')
+                # plot data
+                ax.scatter(df.Spacing_set,df.percent_cumulative)
+                ax.grid()
+                # refresh canvas
+                self.canvas.draw()
+            elif self.CB_Modelo.isChecked() and not self.CB_Scatter.isChecked():  #Solo modelo activado
+                
+                df = pd.read_csv(self.LE_ingresoBD.text(), header = None).rename(columns = {0:"Spacing_set"})
+                df = df.sort_values(['Spacing_set'], ascending= True)
+                max_value_Spacingset = df['Spacing_set'].max()
+                stddev = self.DSB_StandardDeviation.value()
+                mean = self.DSB_media.value()
+                x_fit = np.linspace(0,max_value_Spacingset,200)
+                dist = lognorm([stddev],loc=mean)
+                acumulado_xfit = dist.cdf(x_fit)
+                # clearing old figure
+                self.figure.clear()
+                # create an axis
+                ax = self.figure.add_subplot(111, xlabel = "Spacing Set [m]", ylabel = "acumulado")
+                ##ax.set_title('seda')
+                # plot data
+                ax.grid()
+                ax.plot(x_fit,acumulado_xfit, 'r-')
+                # refresh canvas
+                self.canvas.draw()
 
-        elif self.CB_Scatter.isChecked() and self.CB_Modelo.isChecked():
-            print('modelo y scatter activado')
+            elif self.CB_Scatter.isChecked() and self.CB_Modelo.isChecked():
+                print('modelo y scatter activado')
 
-            df = pd.read_csv(self.LE_ingresoBD.text(), header = None).rename(columns = {0:"Spacing_set"})
-            df = df.sort_values(['Spacing_set'], ascending= True)
-            max_value_Spacingset = df['Spacing_set'].max()
-            stddev = self.DSB_StandardDeviation.value()
-            mean = self.DSB_media.value()
-            x_fit = np.linspace(0,max_value_Spacingset,200)
-            dist = lognorm([stddev],loc=mean)
-            acumulado_xfit = dist.cdf(x_fit)
-            df = df.reset_index(drop=True)
-            df['CumSum_SpacingSet'] = df['Spacing_set'].cumsum()
-            df['percent_cumulative'] = df['CumSum_SpacingSet']/df['Spacing_set'].sum()
-            # clearing old figure
-            self.figure.clear()
-            # create an axis
-            ax = self.figure.add_subplot(111, xlabel = "Spacing Set [m]", ylabel = "acumulado")
-            ##ax.set_title('seda')
-            # plot data
-            ax.scatter(df.Spacing_set,df.percent_cumulative)
-            ax.plot(x_fit,acumulado_xfit, 'r-')
-            ax.grid()
-            # refresh canvas
-            self.canvas.draw()
-        else:
-           print('seleccione un checkbox')
+                df = pd.read_csv(self.LE_ingresoBD.text(), header = None).rename(columns = {0:"Spacing_set"})
+                df = df.sort_values(['Spacing_set'], ascending= True)
+                max_value_Spacingset = df['Spacing_set'].max()
+                stddev = self.DSB_StandardDeviation.value()
+                mean = self.DSB_media.value()
+                x_fit = np.linspace(0,max_value_Spacingset,200)
+                dist = lognorm([stddev],loc=mean)
+                acumulado_xfit = dist.cdf(x_fit)
+                df = df.reset_index(drop=True)
+                df['CumSum_SpacingSet'] = df['Spacing_set'].cumsum()
+                df['percent_cumulative'] = df['CumSum_SpacingSet']/df['Spacing_set'].sum()
+                # clearing old figure
+                self.figure.clear()
+                # create an axis
+                ax = self.figure.add_subplot(111, xlabel = "Spacing Set [m]", ylabel = "acumulado")
+                ##ax.set_title('seda')
+                # plot data
+                ax.scatter(df.Spacing_set,df.percent_cumulative)
+                ax.plot(x_fit,acumulado_xfit, 'r-')
+                ax.grid()
+                # refresh canvas
+                self.canvas.draw()
+            else:
+                msg = QtWidgets.QMessageBox()
+                msg.resize(200,100)
+                msg.setWindowTitle("CheckBox")
+                msg.setText("Seleccione un CheckBox")
+                msg.setIcon(QtWidgets.QMessageBox.Warning)
+                x = msg.exec_()
+
+        except FileNotFoundError:
+            msg = QtWidgets.QMessageBox()
+            msg.resize(200,100)
+            msg.setWindowTitle("Error de ruta")
+            msg.setText("No se encuentra el archivo, asegurese de escribir correctamente la ruta")
+            msg.setIcon(QtWidgets.QMessageBox.Warning)
+            x = msg.exec_()
 
     def base_actual(self):
 
