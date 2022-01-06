@@ -17,6 +17,9 @@ class Ui_Dialog(object):
         Dialog.setObjectName("Dialog")
         Dialog.resize(1055, 774)
         
+        self.lbl_autor = QtWidgets.QLabel(Dialog)
+        self.lbl_autor.setGeometry(QtCore.QRect(730,680,200,100))
+        self.lbl_autor.setText('En caso de encontrar algun error,\ncomunicarse con Pablo Gómez\n(pgomez@srk.cl)')
 
         # --- Groupbox ploteo en matplotlib ---
         self.GB_PlotMat = QtWidgets.QGroupBox(Dialog)
@@ -24,7 +27,6 @@ class Ui_Dialog(object):
         ##self.figure = MyFigure()
         # a figure instance to plot on
         self.figure = plt.figure()
-   
         # this is the Canvas Widget that 
         # displays the 'figure'it takes the
         # 'figure' instance as a parameter to __init__
@@ -32,7 +34,6 @@ class Ui_Dialog(object):
         # this is the Navigation widget
         # it takes the Canvas widget and a parent
         self.toolbar = NavigationToolbar(self.canvas,Dialog)
-
         self.gridlayout = QtWidgets.QGridLayout(self.GB_PlotMat)
         self.gridlayout.addWidget(self.toolbar, 0, 1)
         self.gridlayout.addWidget(self.canvas, 1, 1)
@@ -241,6 +242,14 @@ class Ui_Dialog(object):
             msg.resize(200,100)
             msg.setWindowTitle("Error de ruta")
             msg.setText("No se encuentra el archivo, asegurese de escribir correctamente la ruta")
+            msg.setIcon(QtWidgets.QMessageBox.Warning)
+            x = msg.exec_()
+        
+        except TypeError:
+            msg = QtWidgets.QMessageBox()
+            msg.resize(200,100)
+            msg.setWindowTitle("Error de Lectura")
+            msg.setText("Su archivo tiene un error de lectura, asegurese que esté bien escrito")
             msg.setIcon(QtWidgets.QMessageBox.Warning)
             x = msg.exec_()
 
