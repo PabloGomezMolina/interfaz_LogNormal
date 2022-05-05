@@ -20,7 +20,7 @@ class Ui_Dialog(object):
         #Derechos de autor
         self.lbl_autor = QtWidgets.QLabel(Dialog)
         self.lbl_autor.setGeometry(QtCore.QRect(730,680,200,100))
-        self.lbl_autor.setText('En caso de encontrar algun error,\ncomunicarse con Pablo Gómez\n(pgomez@srk.cl)')
+        self.lbl_autor.setText('En caso de encontrar algun error,\ncomunicarse con PGomez\n')
 
         # --- Groupbox ploteo en matplotlib ---
         self.GB_PlotMat = QtWidgets.QGroupBox(Dialog)
